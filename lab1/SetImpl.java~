@@ -1,0 +1,151 @@
+/******************************************************************************
+ * For complication and execution instructions, see:  SetMain.java
+ * Version 0.1,  2017
+ * @author Michael Hay
+ */
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+/**
+ * An implementation of the set interface that uses a fixed-size array to store elements.  As elements are added to the
+ * set, the array is automatically resized.
+ */
+public class SetImpl<E> implements Set<E> {
+
+    private E[] elements;                  // where elements should be stored (order does not matter)
+    private int cardinality;               // the number of elements in the set
+
+    private SetImpl(int capacity) {
+        capacity = Math.max(capacity, 1);  // create storage for at least one element
+        @SuppressWarnings("unchecked")     // this cast is okay because methods will ensure that only E's are added
+                E[] tempItems = (E[]) new Object[capacity];
+        elements = tempItems;
+        cardinality = 0;
+    }
+
+    /**
+     * Create an empty set.
+     */
+    public SetImpl() {
+        this(0);
+    }
+
+    /**
+     * Create a set via enumeration.  Each element in {@code elementsToAdd} should be added to the set.  Note that
+     * {@code elementsToAdd} may contain duplicates but the created set should not have any duplicates.
+     * @param elementsToAdd elements to add to the set
+     */
+    SetImpl(E[] elementsToAdd) {
+        throw new UnsupportedOperationException("implement me!");
+    }
+
+    @Override
+    public boolean in(E element) {
+        throw new UnsupportedOperationException("implement me!");
+    }
+
+    @Override
+    public void add(E element) {
+        throw new UnsupportedOperationException("implement me!");
+    }
+
+    @Override
+    public void remove(E element) {
+        throw new UnsupportedOperationException("implement me!");
+    }
+
+    @Override
+    public int cardinality() {
+        return cardinality;
+    }
+
+    @Override
+    public Set<E> union(Set<E> otherSet) {
+        throw new UnsupportedOperationException("implement me!");
+    }
+
+    @Override
+    public Set<E> intersection(Set<E> otherSet) {
+        throw new UnsupportedOperationException("implement me!");
+    }
+
+    @Override
+    public Set<E> difference(Set<E> otherSet) {
+        throw new UnsupportedOperationException("implement me!");
+    }
+
+    @Override
+    public Set<Set<E>> powerSet() {
+        throw new UnsupportedOperationException("implement me!");
+    }
+
+    /**
+     * A helper method to check whether a cell is occupied.
+     * @param idx the index to check
+     * @return true if there is an element at this index of the array, false otherwise.
+     */
+    private boolean isOccupied(int idx) {
+        return elements[idx] != null;            // if you implement the challenge problem, you may wish to change
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new SetIterator();
+    }
+
+    /**
+     * An iterator over array of elements.  Automatically skips over empty cells, by using the
+     * {@link SetImpl#isOccupied} method.
+     */
+    class SetIterator implements Iterator<E> {
+
+        private int idx;
+        E next = null;
+
+        SetIterator() {
+            idx = 0;
+            fetchNext();
+        }
+
+        /**
+         * Skips ahead to find next occupied array index.
+         */
+        private void fetchNext() {
+            boolean found = false;
+            for (; idx < elements.length && !found; idx++) {
+                if (isOccupied(idx)) {
+                    next = elements[idx];
+                    found = true;
+                }
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (next == null) {
+                fetchNext();
+            }
+            return next != null;
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            E elt = next;
+            next = null;
+            return elt;
+        }
+    }
+
+    /**
+     * @return the current storage consumed by this implementation
+     */
+    public int capacity() {
+         // you don't need to edit this method
+        return elements.length;
+    }
+}
