@@ -15,24 +15,50 @@ public class NormalForms {
     public static Proposition replaceImplications(Proposition phi) {
         /**
          * Proposition has 3 types: (1) Variable, (2) Neg, and (3) BinOps;
-         * 3 base cases
+         * TODO (add in number of base case) base cases
          */
 
         // case Variable
+        // phi = p
         if (phi.isVariable()) {
             return phi;
         }
 
         // case Neg
-        else if {
+        // phi = ~p, then ~replaceImplications(p)
+        else if (phi.isNotProposition()) {
             return neg(
                     replaceImplications(phi.getFirst())
             );
         }
 
-        // case 
-
+        // case BinOp: If
+        // phi := ( p => q)
         // throw new UnsupportedOperationException("implement me!");
+        else  if (phi.isIfProposition()) {
+            return disj(
+                    neg(phi.getFirst()),
+                    phi.getSecond()
+            );
+        }
+
+        // case BinOp: And
+        // phi := ( p & q)
+        else  if (phi.isAndProposition()) {
+            return conj(
+                    replaceImplications(phi.getFirst()),
+                    replaceImplications(phi.getSecond())
+            );
+        }
+
+        // case BinOp: Or
+        // phi := (p | q)
+        else {
+            return disj(
+                    replaceImplications(phi.getFirst());
+                    replaceImplications(phi.getSecond())
+            );
+        }
     }
 
     /**

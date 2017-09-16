@@ -1,6 +1,6 @@
 import java.util.HashSet;
-import java.util.Set;
 
+import java.util.Set;
 /**
  * Colgate University COSC 290 Lab 2
  * Version 0.1,  2017
