@@ -16,6 +16,7 @@ public class NormalForms {
         /**
          * Proposition has 3 types: (1) Variable, (2) Neg, and (3) BinOps;
          * TODO (add in number of base case) base cases
+         * TODO the recursion seems not to work. ArgumentMain.testReplaceIf_03() shows it
          */
 
         // case Variable
@@ -37,13 +38,13 @@ public class NormalForms {
         // throw new UnsupportedOperationException("implement me!");
         else  if (phi.isIfProposition()) {
             return Proposition.disj(
-                    Proposition.neg(phi.getFirst()),
-                    phi.getSecond()
+                    Proposition.neg(replaceImplications(phi.getFirst())),
+                    replaceImplications(phi.getSecond())
             );
         }
 
         // case BinOp: And
-        // phi := ( p & q)
+        // phi := (p & q)
         else  if (phi.isAndProposition()) {
             return Proposition.conj(
                     replaceImplications(phi.getFirst()),
