@@ -21,9 +21,12 @@ public class ArgumentMain {
         //checkSimpleArgument();
 
         // SELFCHECK:
-        testDisplayAnd01();
-        testDisplayAnd02();
-        testDisplayAnd03();
+        testDisplay_01();
+        testDisplay_02();
+        testDisplay_03();
+
+        System.out.println("Starting test case to replace Implications");
+        testReplaceIf_01();
     }
 
     private static void displayComplexProposition() {
@@ -64,7 +67,7 @@ public class ArgumentMain {
         System.out.println("This argument is " + (isTautology? "valid." : "not valid."));
     }
 
-    private static void testDisplayAnd01() {
+    private static void testDisplay_01() {
         // Construct a complex proposition
         // prop2 := (((p | q) & ~r) & ((p | q) | r))
         Proposition prop1 = Proposition.conj(
@@ -82,7 +85,7 @@ public class ArgumentMain {
         System.out.println();
     }
 
-    private static void testDisplayAnd02() {
+    private static void testDisplay_02() {
         // Construct a complex proposition
         // prop2 := (~((p | q) & r) & ((p | q) | r))
         Proposition prop2 = Proposition.conj(
@@ -102,7 +105,7 @@ public class ArgumentMain {
         System.out.println();
     }
 
-    private static void testDisplayAnd03() {
+    private static void testDisplay_03() {
         // Construct a complex proposition
         // prop3 := ~(r | ~(p & q))
         Proposition prop3 = Proposition.disj(
@@ -113,6 +116,17 @@ public class ArgumentMain {
         );
 
         System.out.println("prop3 = " + prop3);
+        System.out.println();
+    }
+
+    private static void testReplaceIf_01() {
+        // Construct a complex proposition
+        // prop1 := (r => p)
+        Proposition prop1 = Proposition.implies(p,q);
+
+        System.out.println("prop1 = " + prop1);
+        Proposition prop1_ed = prop1.replaceImplications();
+        System.out.println("prop1 edited = " + prop1_ed);
         System.out.println();
     }
 

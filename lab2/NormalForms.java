@@ -30,7 +30,7 @@ public class NormalForms {
             );
         }
 
-        // case 
+        // case
 
         // throw new UnsupportedOperationException("implement me!");
     }
