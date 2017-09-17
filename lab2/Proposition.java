@@ -152,6 +152,7 @@ public class Proposition {
      */
     public static Proposition implies(Proposition p, Proposition q) {
         // look at the other examples above for tips on how to write this
-        throw new UnsupportedOperationException("implement me!");
+        return new BinOp(Connective.IF, p, q);
+        //throw new UnsupportedOperationException("implement me!");
     }
 }

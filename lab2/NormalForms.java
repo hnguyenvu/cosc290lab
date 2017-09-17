@@ -27,7 +27,7 @@ public class NormalForms {
         // case Neg
         // phi = ~p, then ~replaceImplications(p)
         else if (phi.isNotProposition()) {
-            return neg(
+            return Proposition.neg(
                     replaceImplications(phi.getFirst())
             );
         }
@@ -36,8 +36,8 @@ public class NormalForms {
         // phi := ( p => q)
         // throw new UnsupportedOperationException("implement me!");
         else  if (phi.isIfProposition()) {
-            return disj(
-                    neg(phi.getFirst()),
+            return Proposition.disj(
+                    Proposition.neg(phi.getFirst()),
                     phi.getSecond()
             );
         }
@@ -45,7 +45,7 @@ public class NormalForms {
         // case BinOp: And
         // phi := ( p & q)
         else  if (phi.isAndProposition()) {
-            return conj(
+            return Proposition.conj(
                     replaceImplications(phi.getFirst()),
                     replaceImplications(phi.getSecond())
             );
@@ -54,8 +54,8 @@ public class NormalForms {
         // case BinOp: Or
         // phi := (p | q)
         else {
-            return disj(
-                    replaceImplications(phi.getFirst());
+            return Proposition.disj(
+                    replaceImplications(phi.getFirst()),
                     replaceImplications(phi.getSecond())
             );
         }

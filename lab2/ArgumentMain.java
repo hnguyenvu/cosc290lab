@@ -125,7 +125,7 @@ public class ArgumentMain {
         Proposition prop1 = Proposition.implies(p,q);
 
         System.out.println("prop1 = " + prop1);
-        Proposition prop1_ed = prop1.replaceImplications();
+        Proposition prop1_ed = NormalForms.replaceImplications(prop1);
         System.out.println("prop1 edited = " + prop1_ed);
         System.out.println();
     }
