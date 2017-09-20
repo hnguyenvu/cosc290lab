@@ -10,6 +10,7 @@ public class ArgumentMain {
     private static Variable q = new Variable("q");
     private static Variable r = new Variable("r");
     private static Variable t = new Variable("t");
+    private static Variable a = new Variable("a");
 
     public static void main(String[] args) {
 
@@ -29,6 +30,7 @@ public class ArgumentMain {
         testReplaceIf_01();
         testReplaceIf_02();
         testReplaceIf_03();
+        testReplaceIf_04();
     }
 
     private static void displayComplexProposition() {
@@ -163,4 +165,23 @@ public class ArgumentMain {
         System.out.println();
     }
 
+    private static void testReplaceIf_04() {
+        // Construct a complex proposition
+        // prop1 := ((r => (a => q))) & ((a => p) => (t => q)))
+        Proposition prop4 = Proposition.conj(
+                Proposition.implies(
+                        r,
+                        Proposition.implies(a,q)
+                ),
+                Proposition.implies(
+                        Proposition.implies(a, p),
+                        Proposition.implies(t, q)
+                )
+        );
+
+        Proposition prop4_ed = NormalForms.replaceImplications(prop4);
+        System.out.println("prop4 = " + prop4);
+        System.out.println("prop4 edited = " + prop4_ed);
+        System.out.println();
+    }
 }
