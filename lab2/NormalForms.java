@@ -70,6 +70,7 @@ public class NormalForms {
      *
      * @param phi a proposition to transform to NNF
      * @return psi, a proposition that has no => and is logically equivalent to phi
+     * TODO
      * @throws IllegalPropException if phi contains a connective that is not in the set {&, |, ~}.
      */
     public static Proposition toNNF(Proposition phi) {
@@ -105,8 +106,10 @@ public class NormalForms {
                         toNNF(phi.getFirst()),
                         toNNF(phi.getSecond())
                 );
-            else
+            else if (phi.isVariable())
                 return phi;
+            else
+                throw new IllegalPropException("Proposition contains a connective that is not in the set {&, |, ~}");
         }
 
         // case (2): phi is a Not Proposition (has a ~ in the outer layer)
@@ -133,8 +136,10 @@ public class NormalForms {
                                 phi.getFirst().getSecond())
                         )
                 );
-            else // (phi.getFirst().isVariable())
+            else if (phi.getFirst().isVariable()) // (phi.getFirst().isVariable())
                 return phi;
+            else
+                throw new IllegalPropException("Proposition contains a connective that is not in the set {&, |, ~}");
         }
         //throw new UnsupportedOperationException("implement me!");
     }
