@@ -29,6 +29,12 @@ public class ArgumentMain {
         testReplaceIf_01();
         testReplaceIf_02();
         testReplaceIf_03();
+
+        System.out.println("Starting test case for toNNF");
+        testNNF_01();
+        testNNF_02();
+        testNNF_03();
+
     }
 
     private static void displayComplexProposition() {
@@ -134,7 +140,7 @@ public class ArgumentMain {
 
     private static void testReplaceIf_02() {
         // Construct a complex proposition
-        // prop1 := (~r => (p & q))
+        // prop2 := (~r => (p & q))
         Proposition prop2 = Proposition.implies(
                 Proposition.neg(r),
                 Proposition.conj(p,q)
@@ -148,7 +154,7 @@ public class ArgumentMain {
 
     private static void testReplaceIf_03() {
         // Construct a complex proposition
-        // prop1 := ((r => q) => (~p & (t => q)))
+        // prop3 := ((r => q) => (~p & (t => q)))
         Proposition prop3 = Proposition.implies(
                 Proposition.implies(r,q),
                 Proposition.conj(
@@ -160,6 +166,48 @@ public class ArgumentMain {
         Proposition prop3_ed = NormalForms.replaceImplications(prop3);
         System.out.println("prop3 = " + prop3);
         System.out.println("prop3 edited = " + prop3_ed);
+        System.out.println();
+    }
+
+    private static void testNNF_01() {
+        // Construct a complex proposition
+        // prop1 := (p => q)
+        Proposition prop1 = Proposition.implies(p,q);
+
+        System.out.println("prop1 = " + prop1);
+        Proposition prop1_ed = NormalForms.toNNF(prop1);
+        System.out.println("prop1 toNNF = " + prop1_ed);
+        System.out.println();
+    }
+
+    private static void testNNF_02() {
+        // Construct a complex proposition
+        // prop2 := (~r => (p & q))
+        Proposition prop2 = Proposition.implies(
+                Proposition.neg(r),
+                Proposition.conj(p,q)
+        );
+
+        Proposition prop2_ed = NormalForms.toNNF(prop2);
+        System.out.println("prop2 = " + prop2);
+        System.out.println("prop2 toNNF = " + prop2_ed);
+        System.out.println();
+    }
+
+    private static void testNNF_03() {
+        // Construct a complex proposition
+        // prop3 := ((r => q) => (~p & (t => q)))
+        Proposition prop3 = Proposition.implies(
+                Proposition.implies(r,q),
+                Proposition.conj(
+                        Proposition.neg(p),
+                        Proposition.implies(t, q)
+                )
+        );
+
+        Proposition prop3_ed = NormalForms.toNNF(prop3);
+        System.out.println("prop3 = " + prop3);
+        System.out.println("prop3 toNNF = " + prop3_ed);
         System.out.println();
     }
 

@@ -16,7 +16,6 @@ public class NormalForms {
         /**
          * Proposition has 3 types: (1) Variable, (2) Neg, and (3) BinOps;
          * TODO (add in number of base case) base cases
-         * TODO the recursion seems not to work. ArgumentMain.testReplaceIf_03() shows it
          */
 
         // case Variable
@@ -74,7 +73,70 @@ public class NormalForms {
      * @throws IllegalPropException if phi contains a connective that is not in the set {&, |, ~}.
      */
     public static Proposition toNNF(Proposition phi) {
-        throw new UnsupportedOperationException("implement me!");
+        /**
+         * 2 scenarios: (1) phi is not a BinOp and (2) phi is a BinOp
+         * TODO fix this logic again
+         * (1): phi is not a BinOp
+         *      (a) phi is a non BinOp (without not) == a variable
+         *         return: phi
+         *      (b) phi is a not + non BinOp == can have multiple not within the non BinOp
+         *          (b.1) non BinOp == variable
+         *              base case: return phi
+         *          (b.2) non BinOp is another not + variable
+         *              base case: return phi.getFirst() (eliminate the 2 nots)
+         *          (b.3) non BinOp is not + non Bin
+         *              recursion
+        // (2): phi is a BinOp
+        //      (a) phi is a BinOp (a connective b)
+        //      (b) phi is a ~(a connective b)
+        */
+
+        // case (1): phi is not a Not Proposition (does not have ~ in the outest layer)
+        if (!phi.isNotProposition()) {
+            if (phi.isIfProposition())
+                return toNNF(replaceImplications(phi));
+            else if (phi.isAndProposition())
+                return Proposition.conj(
+                        toNNF(phi.getFirst()),
+                        toNNF(phi.getSecond())
+                );
+            else if (phi.isOrProposition())
+                return Proposition.disj(
+                        toNNF(phi.getFirst()),
+                        toNNF(phi.getSecond())
+                );
+            else
+                return phi;
+        }
+
+        // case (2): phi is a Not Proposition (has a ~ in the outer layer)
+        else {
+            if (phi.getFirst().isNotProposition())
+                return toNNF(phi.getFirst().getFirst());
+            else if (phi.getFirst().isIfProposition())
+                return toNNF(replaceImplications(phi));
+            else if (phi.getFirst().isAndProposition())
+                return Proposition.disj(
+                        toNNF(Proposition.neg(
+                                phi.getFirst().getFirst())
+                        ),
+                        toNNF(Proposition.neg(
+                                phi.getFirst().getSecond())
+                        )
+                );
+            else if (phi.getFirst().isOrProposition())
+                return Proposition.conj(
+                        toNNF(Proposition.neg(
+                                phi.getFirst().getFirst())
+                        ),
+                        toNNF(Proposition.neg(
+                                phi.getFirst().getSecond())
+                        )
+                );
+            else // (phi.getFirst().isVariable())
+                return phi;
+        }
+        //throw new UnsupportedOperationException("implement me!");
     }
 
     /**
@@ -86,7 +148,7 @@ public class NormalForms {
      * @throws IllegalPropException if phi is not in NNF
      */
     public static Proposition distOrOverAnd(Proposition phi) {
-        throw new UnsupportedOperationException("implement me!");
+        //throw new UnsupportedOperationException("implement me!");
     }
 
     /**
