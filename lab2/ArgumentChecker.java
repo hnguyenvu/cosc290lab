@@ -18,7 +18,8 @@ public class ArgumentChecker {
      */
     public static boolean checkArgument(Proposition[] premises, Proposition conclusion) {
         Proposition psiImpliesPhi = fromArgument(premises, conclusion);
-        throw new UnsupportedOperationException("implement me!");
+        return isTautology(psiImpliesPhi);
+        //throw new UnsupportedOperationException("implement me!");
         // hint: how do you check whether conclusion phi follows logically from premises (psi1 & psi2 & ... & psiN)?
     }
 
@@ -30,7 +31,14 @@ public class ArgumentChecker {
      * @return a proposition of the form (psi1 & psi2 & ... & psiN) => phi
      */
     public static Proposition fromArgument(Proposition[] premises, Proposition conclusion) {
-        throw new UnsupportedOperationException("implement me!");
+        Proposition psi = premises[0];
+
+        for (int i = 1; i < premises.length(); i++) {
+            psi = Proposition.conj(psi, premises[i]);
+        }
+
+        return Proposition.implies(psi, conclusion);
+        //throw new UnsupportedOperationException("implement me!");
     }
 
     /**
@@ -39,6 +47,10 @@ public class ArgumentChecker {
      * @return true if phi is a tautology and false otherwise
      */
     public static boolean isTautology(Proposition phi) {
-        throw new UnsupportedOperationException("implement me!");
+        Proposition phi_CNF = NormalForms.toCNF(phi);
+
+        
+
+        //throw new UnsupportedOperationException("implement me!");
     }
 }

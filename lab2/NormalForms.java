@@ -171,6 +171,8 @@ public class NormalForms {
      */
     public static Proposition distOrOverAnd(Proposition phi) {
 
+        System.out.println(phi);
+
         //
         if (phi.isVariable())
             return phi;
@@ -182,95 +184,167 @@ public class NormalForms {
                 return phi;
         }
 
+        // TODO >> the case where there's trouble
         else if (phi.isOrProposition()) {
+
+            //System.out.println("isOr");
+
             Proposition p1 = phi.getFirst();
             Proposition p2 = phi.getSecond();
+            // try to keep p1 the same, break down p2 until it's variable/NotProp
 
-            if (p1.isVariable())
-                return distOrOverAnd(
+            /** Unnecessary as the first two base cases should take care of this
+            if (p2.isVariable())
+                return //distOrOverAnd(
                         Proposition.disj(
-                                p1,
-                                distOrOverAnd(p2)
-                        )
+                                distOrOverAnd(p1),
+                                p2
+                        //)
                 );
 
-            else if (p1.isNotProposition()) {
-                if (p1.getFirst().isVariable())
+            else if (p2.isNotProposition()) {
+                if (p2.getFirst().isVariable())
                     return //distOrOverAnd(
                             Proposition.disj(
-                                    p1,
-                                    distOrOverAnd(p2)
+                                    distOrOverAnd(p1),
+                                    p2
+
                             //)
                     );
                 else throw new IllegalPropException("Proposition is not in NNF");
             }
 
-            else if (p1.isOrProposition())
+            */
+
+            // case p1 || (p2.getFirst || p2.getSecond)
+            // ==  p1 || p2.getFirst || p2.getSecond
+            /** TODO
+            else if (p2.isOrProposition())
                 return //distOrOverAnd(
                         Proposition.disj(
-                                distOrOverAnd(p1),
-                                distOrOverAnd(p2)
+                                Proposition.disj(
+                                        distOrOverAnd(p1),
+                                        distOrOverAnd(p2.getFirst())
+                                ),
+                                Proposition.disj(
+                                        distOrOverAnd(p1),
+                                        distOrOverAnd(p2.getSecond())
+                                )
                         //)
                 );
+            */
 
-            else if (p1.isAndProposition())
+            if (p2.isAndProposition()) {
+                /** Unnecessary
+                if (p2.isVariable())
+                    return //distOrOverAnd(
+                            Proposition.disj(
+                                    distOrOverAnd(p1),
+                                    p2
+                                //)
+                    );
+
+                else if (p2.isNotProposition()) {
+                    if (p2.getFirst().isVariable())
+                        return //distOrOverAnd(
+                                Proposition.disj(
+                                        distOrOverAnd(p1),
+                                        p2
+                                    //)
+                        );
+                    else throw new IllegalPropException("Proposition is not in NNF");
+                }
+
+                if (p2.isAndProposition()) {
+                    return Proposition.conj(
+                            Proposition.disj(
+                                    distOrOverAnd(p1),
+                                    p2.getFirst()
+                            ),
+                            Proposition.disj(
+                                    distOrOverAnd(p1),
+                                    p2.getSecond()
+                            )
+                    );
+                }
+
+                else if (p2.isOrProposition()) {
+                    return Proposition.disj(
+                            Proposition.disj(
+                                    distOrOverAnd(p1),
+                                    p2.getFirst()
+                            ),
+                            Proposition.disj(
+                                    distOrOverAnd(p1),
+                                    p2.getSecond()
+                            )
+                    );
+                }
+                else throw new IllegalPropException("Proposition is not in NNF");
+                */
                 return Proposition.conj(
-                        Proposition.disj(
-                                distOrOverAnd(p1.getFirst()),
-                                distOrOverAnd(p2)
-                        ),
-                        Proposition.disj(
-                                distOrOverAnd(p1.getSecond()),
-                                distOrOverAnd(p2)
-                        )
+                        distOrOverAnd(Proposition.disj(
+                                p1,
+                                p2.getFirst()
+                        )),
+                        distOrOverAnd(Proposition.disj(
+                                p1,
+                                p2.getSecond()
+                        ))
                 );
+            }
 
-            else throw new IllegalPropException("Proposition is not in NNF");
+            //else throw new IllegalPropException("Proposition is not in NNF");
+            // consider the case where p1 is AND and not p2 - have exhausted p2
+            else if (p1.isAndProposition()) {
+                return Proposition.conj(
+                        distOrOverAnd(Proposition.disj(
+                                p1.getFirst(),
+                                p2
+                        )),
+                        distOrOverAnd(Proposition.disj(
+                                p1.getSecond(),
+                                p2
+                        ))
+                );
+            }
+
+            else return Proposition.disj(
+                    p1,
+                    p2
+            );
         }
 
         else if (phi.isAndProposition()) {
             //throw new UnsupportedOperationException("implement me!");
+            System.out.println("isAnd");
+
 
             Proposition p1 = phi.getFirst();
             Proposition p2 = phi.getSecond();
 
-            if (p1.isVariable())
+            if (p2.isVariable())
                 return Proposition.conj(
-                        p1,
-                        distOrOverAnd(p2)
+                        p2,
+                        distOrOverAnd(p1)
                 );
 
-            else if (p1.isNotProposition()) {
-                if (p1.getFirst().isVariable())
+            else if (p2.isNotProposition()) {
+                if (p2.getFirst().isVariable())
                     return Proposition.conj(
-                            p1,
-                            distOrOverAnd(p2)
+                            p2,
+                            distOrOverAnd(p1)
                     );
                 else throw new IllegalPropException("Proposition is not in NNF");
             }
 
-            else if (p1.isOrProposition() || p1.isAndProposition())
+            else if (p2.isOrProposition() || p2.isAndProposition())
                 return Proposition.conj(
+                        //distOrOverAnd(p1),
                         distOrOverAnd(p1),
                         distOrOverAnd(p2)
                 );
-
-            /**
-            else if (phi.isAndProposition())
-                return Proposition.conj(
-                        Proposition.disj(
-                                distOrOverAnd(p1.getFirst()),
-                                distOrOverAnd(p2)
-                        ),
-                        Proposition.disj(
-                                distOrOverAnd(p1.getSecond()),
-                                distOrOverAnd(p2)
-                        )
-                );
-            */
-
             else throw new IllegalPropException("Proposition is not in NNF");
-
         }
 
         else throw new IllegalPropException("Proposition is not in NNF");
