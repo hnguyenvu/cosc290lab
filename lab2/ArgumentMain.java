@@ -35,6 +35,10 @@ public class ArgumentMain {
         testNNF_02();
         testNNF_03();
 
+        System.out.println("Starting test case for toCNF");
+        testCNF_01();
+        //testCNF_02();
+        //testCNF_03();
     }
 
     private static void displayComplexProposition() {
@@ -175,7 +179,7 @@ public class ArgumentMain {
         Proposition prop1 = Proposition.implies(p,q);
 
         System.out.println("prop1 = " + prop1);
-        Proposition prop1_ed = NormalForms.toNNF(prop1);
+        Proposition prop1_ed = NormalForms.toNNF(NormalForms.replaceImplications(prop1));
         System.out.println("prop1 toNNF = " + prop1_ed);
         System.out.println();
     }
@@ -188,7 +192,7 @@ public class ArgumentMain {
                 Proposition.conj(p,q)
         );
 
-        Proposition prop2_ed = NormalForms.toNNF(prop2);
+        Proposition prop2_ed = NormalForms.toNNF(NormalForms.replaceImplications(prop2));
         System.out.println("prop2 = " + prop2);
         System.out.println("prop2 toNNF = " + prop2_ed);
         System.out.println();
@@ -205,10 +209,19 @@ public class ArgumentMain {
                 )
         );
 
-        Proposition prop3_ed = NormalForms.toNNF(prop3);
+        Proposition prop3_ed = NormalForms.toNNF(NormalForms.replaceImplications(prop3));
         System.out.println("prop3 = " + prop3);
         System.out.println("prop3 toNNF = " + prop3_ed);
         System.out.println();
     }
 
+    private static void testCNF_01() {
+        // prop1 := (p => q)
+        Proposition prop1 = Proposition.implies(p,q);
+
+        System.out.println("prop1 = " + prop1);
+        Proposition prop1_ed = NormalForms.toCNF(prop1);
+        System.out.println("prop1 toCNF = " + prop1_ed);
+        System.out.println();
+    }
 }

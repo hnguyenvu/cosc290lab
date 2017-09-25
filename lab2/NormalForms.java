@@ -75,28 +75,45 @@ public class NormalForms {
      */
     public static Proposition toNNF(Proposition phi) {
         /**
-         * 2 scenarios: (1) phi is not a BinOp and (2) phi is a BinOp
+         * 2 scenarios: (1) phi is not a NOT Proposition (meaning a normal prop w/o a NOT in the outer layer)
+         * and (2) phi is a Not Proposition
          * TODO fix this logic again
-         * (1): phi is not a BinOp
-         *      (a) phi is a non BinOp (without not) == a variable
-         *         return: phi
-         *      (b) phi is a not + non BinOp == can have multiple not within the non BinOp
-         *          (b.1) non BinOp == variable
-         *              base case: return phi
-         *          (b.2) non BinOp is another not + variable
-         *              base case: return phi.getFirst() (eliminate the 2 nots)
-         *          (b.3) non BinOp is not + non Bin
-         *              recursion
-        // (2): phi is a BinOp
-        //      (a) phi is a BinOp (a connective b)
-        //      (b) phi is a ~(a connective b)
-        */
+         * (1): phi is not a Not Proposition
+         *      (a) phi is an IF
+         *          remove If and then convert it to NNF forms
+         *      (b) phi is an AND
+         *          take all propositions within phi (getFirst and getSecond) and convert them to NNF form
+         *          return a CONJUNCTION of the two compoments
+         *      (c) phi is an OR
+         *          take all propositions within phi (getFirst and getSecond) and convert them to NNF form
+         *          return a DISJUNCTION of the two compoments
+         *      (d) phi is a variable
+         *          just return phi
+         *      (e) not one of the above -> contains some other connectives not OR, AND, NOT, IF
+         *          throw errors
+         *
+         * (2): phi is a Not Proposition. Proposition p = phi.getFirst()
+         *      (a) p is an NOT
+         *          remove the two not at Phi and p level, convert p.getFirst() to NNF
+         *      (b) p is an IF
+         *          remove If and then convert it to NNF forms
+         *      (c) p is an AND
+         *          take all propositions within phi (getFirst and getSecond) and convert them to NNF form
+         *          return a DISJUNCTION of the two compoments
+         *      (d) p is an OR
+         *          take all propositions within phi (getFirst and getSecond) and convert them to NNF form
+         *          return a CONJUNCTION of the two compoments
+         *      (e) p is a variable
+         *          just return p
+         *      (f) not one of the above -> contains some other connectives not OR, AND, NOT, IF
+         *          throw errors
+         */
 
         // case (1): phi is not a Not Proposition (does not have ~ in the outest layer)
         if (!phi.isNotProposition()) {
-            if (phi.isIfProposition())
-                return toNNF(replaceImplications(phi));
-            else if (phi.isAndProposition())
+            //if (phi.isIfProposition())
+                //return toNNF(replaceImplications(phi));
+            if (phi.isAndProposition())
                 return Proposition.conj(
                         toNNF(phi.getFirst()),
                         toNNF(phi.getSecond())
@@ -116,8 +133,8 @@ public class NormalForms {
         else {
             if (phi.getFirst().isNotProposition())
                 return toNNF(phi.getFirst().getFirst());
-            else if (phi.getFirst().isIfProposition())
-                return toNNF(replaceImplications(phi));
+            //else if (phi.getFirst().isIfProposition())
+                //return toNNF(replaceImplications(phi));
             else if (phi.getFirst().isAndProposition())
                 return Proposition.disj(
                         toNNF(Proposition.neg(
@@ -148,11 +165,115 @@ public class NormalForms {
      * Constructs a proposition psi such that (1) psi is in CNF and (2) psi is logically
      * equivalent to phi.  Expects a proposition phi that is in NNF.
      *
-     * @param phi a proposition to transform to NNF
+     * @param phi a proposition to transform
      * @return psi, a proposition that has no => and is logically equivalent to phi
      * @throws IllegalPropException if phi is not in NNF
      */
     public static Proposition distOrOverAnd(Proposition phi) {
+
+        //
+        if (phi.isVariable())
+            return phi;
+
+        else if (phi.isNotProposition()) {
+            if (!phi.getFirst().isVariable())
+                throw new IllegalPropException("Proposition is not in NNF");
+            else
+                return phi;
+        }
+
+        else if (phi.isOrProposition()) {
+            Proposition p1 = phi.getFirst();
+            Proposition p2 = phi.getSecond();
+
+            if (p1.isVariable())
+                return distOrOverAnd(
+                        Proposition.disj(
+                                p1,
+                                distOrOverAnd(p2)
+                        )
+                );
+
+            else if (p1.isNotProposition()) {
+                if (p1.getFirst().isVariable())
+                    return //distOrOverAnd(
+                            Proposition.disj(
+                                    p1,
+                                    distOrOverAnd(p2)
+                            //)
+                    );
+                else throw new IllegalPropException("Proposition is not in NNF");
+            }
+
+            else if (p1.isOrProposition())
+                return //distOrOverAnd(
+                        Proposition.disj(
+                                distOrOverAnd(p1),
+                                distOrOverAnd(p2)
+                        //)
+                );
+
+            else if (p1.isAndProposition())
+                return Proposition.conj(
+                        Proposition.disj(
+                                distOrOverAnd(p1.getFirst()),
+                                distOrOverAnd(p2)
+                        ),
+                        Proposition.disj(
+                                distOrOverAnd(p1.getSecond()),
+                                distOrOverAnd(p2)
+                        )
+                );
+
+            else throw new IllegalPropException("Proposition is not in NNF");
+        }
+
+        else if (phi.isAndProposition()) {
+            //throw new UnsupportedOperationException("implement me!");
+
+            Proposition p1 = phi.getFirst();
+            Proposition p2 = phi.getSecond();
+
+            if (p1.isVariable())
+                return Proposition.conj(
+                        p1,
+                        distOrOverAnd(p2)
+                );
+
+            else if (p1.isNotProposition()) {
+                if (p1.getFirst().isVariable())
+                    return Proposition.conj(
+                            p1,
+                            distOrOverAnd(p2)
+                    );
+                else throw new IllegalPropException("Proposition is not in NNF");
+            }
+
+            else if (p1.isOrProposition() || p1.isAndProposition())
+                return Proposition.conj(
+                        distOrOverAnd(p1),
+                        distOrOverAnd(p2)
+                );
+
+            /**
+            else if (phi.isAndProposition())
+                return Proposition.conj(
+                        Proposition.disj(
+                                distOrOverAnd(p1.getFirst()),
+                                distOrOverAnd(p2)
+                        ),
+                        Proposition.disj(
+                                distOrOverAnd(p1.getSecond()),
+                                distOrOverAnd(p2)
+                        )
+                );
+            */
+
+            else throw new IllegalPropException("Proposition is not in NNF");
+
+        }
+
+        else throw new IllegalPropException("Proposition is not in NNF");
         //throw new UnsupportedOperationException("implement me!");
     }
 
